@@ -1,0 +1,7 @@
+exports.Authors = require('./authors')
+exports.Teachers = require('./teachers')
+exports.Users = require('./users')
+exports.Departments = require('./departments')
+exports.Topics = require('./topics')
+exports.Fields = require('./fields')
+exports.Tokens = require('./tokens')
