@@ -8,27 +8,29 @@ const getUserInfo = (data) => new Promise((resolve, reject) => {
     })
         .then(user => {
             if (!user) return reject('Invalid')
-
-            Tokens.findOne({
-                user: user._id
-            })
-                .then(token => {
-                    if (!token || token.value !== data.value) return reject('invalid')
-                    return resolve(data)
-                })
-                .catch(err => reject('Invalid'))
+            resolve(true)
+            // Tokens.findOne({
+            //     user: user._id
+            // })
+            //     .then(token => {
+            //         if (!token || token.value !== data.value) return reject('invalid')
+            //         return resolve(data)
+            //     })
+            //     .catch(err => reject('Invalid'))
         })
         .catch(err => reject(err.message || err))
 })
 
 exports.isAdmin = (req, res, next) => {
+    // console.log({...req.headers})
     const {authorization} = {...req.headers}
     if (!authorization) return res.status(403).send({success: 'false', message: 'Permission denied'})
     try {
         const user = verifyHeaders(authorization)
+        // console.log(user)
         getUserInfo(user)
             .then(success => {
-                if (user.type !== 'admin') return res.status(403).send({success: 'false', message: 'Permission denied'})
+                if (user.type != '1') return res.status(403).send({success: 'false', message: 'Permission denied'})
 
                 req.body.currentUser = user
                 next()

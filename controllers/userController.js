@@ -2,12 +2,9 @@ const userActions = require('../actions/user/userActions')
 
 exports.login = (req, res) => {
     const {username, password} = {...req.body}
-
+    
     userActions.login(username, password)
-        .then(data => res.send({
-            success: true,
-            data,
-        }))
+        .then(data => res.send(data))
         .catch(err => res.send({
             success: false,
             message: err.message || err,
@@ -26,6 +23,7 @@ exports.verify = (req, res) => {
             message: err.message || err,
         }))
 }
+
 exports.changePassword = (req, res) => {
     const {username, password, oldPassword, currentUser} = {...req.body}
 
@@ -40,14 +38,10 @@ exports.changePassword = (req, res) => {
         }))
 }
 
-exports.createUser = (req, res) => {
-    const {username, password} = {...req.body}
-    const type = 'teacher'
-    userActions.addUser(username, password, type)
-        .then(data => res.send({
-            success: true,
-            data,
-        }))
+exports.addUser = (req, res) => {
+    const {number, name, username, password, type, email, degree, department} = {...req.body}
+    userActions.addUser({number, name, username, password, type, email, degree, department})
+        .then(data => res.send(data))
         .catch(err => res.send({
             success: false,
             message: err.message || err,
@@ -55,12 +49,9 @@ exports.createUser = (req, res) => {
 }
 
 exports.deleteUser = (req, res) => {
-    const {id} = {...req.params}
+    const {id} = {...req.params, ...req.body}
     userActions.deleteUser(id)
-        .then(data => res.send({
-            success: true,
-            data,
-        }))
+        .then(data => res.send(data))
         .catch(err => res.send({
             success: false,
             message: err.message || err,
@@ -69,6 +60,15 @@ exports.deleteUser = (req, res) => {
 
 exports.getAllUsers = (req, res) => {
     userActions.getAllUsers()
+        .then(data => res.send(data))
+        .catch(e => res.send({success: false, message: e.message || e}))
+}
+
+exports.editUser = (req, res) => {
+    // console.log(req)
+    const {id ,number, name, username, password, type, email, degree, department} = {...req.body}
+    // console.log({id ,number, name, username, password, type, email, degree, department})
+    userActions.editUser({id ,number, name, username, password, type, email, degree, department})
         .then(data => res.send(data))
         .catch(e => res.send({success: false, message: e.message || e}))
 }

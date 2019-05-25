@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const jwt = require('jsonwebtoken')
-const secretKey = 'SHAZAM!'
+const secretKey = 'IMBATMAN'
 
 exports.hashText = (text) => {
     const value = String(text)

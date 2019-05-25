@@ -5,24 +5,16 @@ const { removeRedundant, isString } = require('../../helpers/validators/typeVali
 exports.login = async (username, password) => {
     const user = await Users.findOne({
         username,
-    })
-        .select('_id username password type')
+    }).select('_id username password type')
 
     if (!user) throw new Error('User not found')
-    console.log(user.password)
-    if (!compareHash(password, user.password)) throw new Error('Wrong password')
-
-    const token = await Tokens.findOne({ user: user._id })
-    const value = (!token || !token.value) ? createHash(new Date().getTime()) : token.value
-    if (!token || !token.value) {
-        const newToken = new Tokens({ user: user._id, value })
-        await newToken.save()
-    }
+    // console.log(user.password)
+    if (password != user.password) throw new Error('Wrong password')
 
     return {
         username,
         type: user.type,
-        token: signJwt({ username, type: user.type, value })
+        token: signJwt({ username, type: user.type})
     }
 }
 
@@ -68,20 +60,32 @@ const _validateArgs = (username, password, type) => {
     return removeRedundant({ username: validUsername, password: validPassword, type: validType })
 }
 
-exports.addUser = async (username, password, type) => {
-    const hash = createHash(password)
-    const validatedArgs = _validateArgs(username, hash, type)
-    const user = new Users(validatedArgs)
-    return (await user.save()).toJSON()
+exports.addUser = async (newUser) => {
+    // const hash = createHash(password)
+    // const validatedArgs = _validateArgs(username, hash, type)
+    const user = new Users(newUser)
+    return await user.save()
 }
 
 exports.deleteUser = async (id) => {
-    const ID = isString(id)
-    const user = await Users.findOne({
-        _id: ID
-    }).select('_id')
+    const user = await Users
+        .findOne({
+            _id: id
+    })
     if (!user) throw new Error('User not found')
     return await user.delete()
+}
+
+exports.editUser = async (newData) => {
+    let {id, ...rest} = newData
+    const user = await Users
+        .findOne({
+            _id : id
+        })
+    if (!user) throw new Error('User not found')
+    else await user.delete()
+    let newUser = new Users({_id: id.toString() , ...rest})
+    return await newUser.save()
 }
 
 exports.getAllUsers = async () => {
