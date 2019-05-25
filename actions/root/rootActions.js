@@ -2,7 +2,7 @@ const models = require('../../models')
 const typeValidators = require('../../helpers/validators/typeValidators')
 
 const _validateAuthor = (args) => {
-    const {name, student_code} = args
+    const { name, student_code } = args
     const validatedArgs = {
         name: typeValidators.isString(name),
         student_code: typeValidators.isString(student_code),
@@ -12,7 +12,7 @@ const _validateAuthor = (args) => {
 }
 
 const _validateEditedAuthors = (args) => {
-    const {name, student_code, _id} = args
+    const { name, student_code, _id } = args
     const validatedArgs = {
         name: typeValidators.isString(name),
         student_code: typeValidators.isString(student_code),
@@ -25,7 +25,7 @@ const _validateEditedAuthors = (args) => {
 }
 
 exports.getHome = async () => {
-    const {Authors} = models
+    const { Authors } = models
 
     return await Authors
         .find({})
@@ -33,9 +33,9 @@ exports.getHome = async () => {
         .lean()
 }
 
-exports.addAuthor = async ({name, student_code}) => {
-    const validatedAuthor = _validateAuthor({name, student_code})
-    const {Authors} = models
+exports.addAuthor = async ({ name, student_code }) => {
+    const validatedAuthor = _validateAuthor({ name, student_code })
+    const { Authors } = models
 
     const author = new Authors(validatedAuthor)
 
@@ -44,8 +44,8 @@ exports.addAuthor = async ({name, student_code}) => {
 
 exports.changeAuthor = async (args) => {
     const validatedAuthors = _validateEditedAuthors(args)
-    const {_id, ...authorInfo} = validatedAuthors
-    const {Authors} = models
+    const { _id, ...authorInfo } = validatedAuthors
+    const { Authors } = models
 
     const author = await Authors
         .findOne({
@@ -58,8 +58,8 @@ exports.changeAuthor = async (args) => {
         const editResult = await Authors.updateOne({
             _id,
         }, {
-            $set: authorInfo
-        })
+                $set: authorInfo
+            })
 
         if (editResult.nModified) {
             return {
@@ -76,10 +76,10 @@ exports.changeAuthor = async (args) => {
 }
 
 exports.removeAuthor = async (_id) => {
-    const {Authors} = models
+    const { Authors } = models
 
-    const removeResult = await Authors.deleteOne({_id})
-    const {deletedCount} = removeResult
+    const removeResult = await Authors.deleteOne({ _id })
+    const { deletedCount } = removeResult
 
     if (deletedCount >= 1) return true
     throw new Error('Can not delete')

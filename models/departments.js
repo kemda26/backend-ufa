@@ -8,4 +8,4 @@ const departments = new mongoose.Schema({
     website: String
 })
 
-module.exports = mongoose.model('departments', departments)
+module.exports = mongoose.model('departments', departments, 'departments')

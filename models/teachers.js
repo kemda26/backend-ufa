@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const teacher = new mongoose.Schema({
+    user: {type: mongoose.Types.ObjectId, ref: 'users'},
     name: String,
     email: String,
     vnuEmail: String,
@@ -13,7 +14,12 @@ const teacher = new mongoose.Schema({
         enum: ['master', 'phd', 'doctor']
     },
     position: String,
-    user: mongoose.Types.ObjectId,
+    avatar: String,
+    fields: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'fields',
+        default: []
+    }]
 })
 
 module.exports = mongoose.model('teachers', teacher)

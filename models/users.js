@@ -1,17 +1,14 @@
 const mongoose = require('mongoose')
 
 const users = new mongoose.Schema({
+    number: String,
+    name: String,
     username: String,
     password: String,
     email: String,
-    status: {
-        type: String,
-        enum: ['active', 'inactive']
-    },
-    type: {
-        type: String,
-        enum: ['admin', 'teacher', 'staff']
-    },
+    type: String,
+    email: String,
+    department: String,
 })
 
-module.exports = mongoose.model('users', users)
+module.exports = mongoose.model('users', users, 'users')

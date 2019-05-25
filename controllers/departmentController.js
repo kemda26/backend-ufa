@@ -1,8 +1,14 @@
-const getDepartmentsActions = require('../actions/departments/departmentActions')
+const departmentActions = require('../actions/departments/departmentActions')
+
+exports.getAllDepartments = (req, res) => {
+    departmentActions.getAllDepartments()
+        .then(data => res.send(data))
+        .catch(e => res.send({success: false, message: e.message || e}))
+}
 
 exports.getDepartments = (req, res) => {
     const {limit, page, name} = {...req.query, ...req.body}
-    getDepartmentsActions.getDepartments({limit, page, name})
+    departmentActions.getDepartments({limit, page, name})
         .then(data => res.send({
             success: true,
             data,
@@ -12,21 +18,21 @@ exports.getDepartments = (req, res) => {
 
 exports.addDepartment = (req, res) => {
     const {name, type, address, phone, website} = {...req.body}
-    getDepartmentsActions.addDepartment({name, type, address, phone, website})
-        .then(department => res.send({success: true, department}))
+    departmentActions.addDepartment({name, type, address, phone, website})
+        .then(department => res.send(department))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
 exports.editDepartment = (req, res) => {
     const {id, name, type, address, phone, website} = {...req.body, ...req.params}
-    getDepartmentsActions.editDepartment({id, name, type, address, phone, website})
-        .then(department => res.send({success: true, department}))
+    departmentActions.editDepartment({id, name, type, address, phone, website})
+        .then(department => res.send(department))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
 exports.deleteDepartment = (req, res) => {
-    const {id} = {...req.params}
-    getDepartmentsActions.deleteDepartment(id)
-        .then(department => res.send({success: true, department}))
+    const {id} = {...req.body ,...req.params}
+    departmentActions.deleteDepartment(id)
+        .then(department => res.send( department))
         .catch(err => res.send({success: false, message: err.message || err}))
 }

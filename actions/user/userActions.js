@@ -1,6 +1,6 @@
-const {Users, Tokens} = require('../../models')
-const {createHash, compareHash, signJwt} = require('../../helpers/bcrypt')
-const {removeRedundant, isString} = require('../../helpers/validators/typeValidators')
+const { Users, Tokens } = require('../../models')
+const { createHash, compareHash, signJwt } = require('../../helpers/bcrypt')
+const { removeRedundant, isString } = require('../../helpers/validators/typeValidators')
 
 exports.login = async (username, password) => {
     const user = await Users.findOne({
@@ -9,19 +9,20 @@ exports.login = async (username, password) => {
         .select('_id username password type')
 
     if (!user) throw new Error('User not found')
+    console.log(user.password)
     if (!compareHash(password, user.password)) throw new Error('Wrong password')
 
-    const token = await Tokens.findOne({user: user._id})
+    const token = await Tokens.findOne({ user: user._id })
     const value = (!token || !token.value) ? createHash(new Date().getTime()) : token.value
     if (!token || !token.value) {
-        const newToken = new Tokens({user: user._id, value})
+        const newToken = new Tokens({ user: user._id, value })
         await newToken.save()
     }
 
     return {
         username,
         type: user.type,
-        token: signJwt({username, type: user.type, value})
+        token: signJwt({ username, type: user.type, value })
     }
 }
 
@@ -29,8 +30,8 @@ exports.verify = async (currentUser) => {
     return currentUser
 }
 
-exports.changePassword = async ({username, password, oldPassword, currentUser}) => {
-    let user = await Users.findOne({username})
+exports.changePassword = async ({ username, password, oldPassword, currentUser }) => {
+    let user = await Users.findOne({ username })
     let newPassword = createHash(password);
     if (!user) throw new Error('User not found')
     if (user.password && user.status === 'active') {
@@ -42,20 +43,20 @@ exports.changePassword = async ({username, password, oldPassword, currentUser}) 
         }
     } else {
         if (currentUser.username !== username) throw new Error('Wrong token')
-        user.password = password
+        user.password = newPassword
         user.status = 'active'
         await user.save()
     }
 
-    const value = createHash(new Date().getTime())
-    const newToken = new Tokens({user: user._id, value})
-    await Tokens.deleteMany({user: user._id})
+    const value = createHash(String(new Date().getTime()))
+    const newToken = new Tokens({ user: user._id, value })
+    await Tokens.deleteMany({ user: user._id })
     await newToken.save()
 
     return {
         username,
         type: user.type,
-        token: signJwt({username, type: user.type, value})
+        token: signJwt({ username, type: user.type, value })
     }
 }
 
@@ -64,14 +65,14 @@ const _validateArgs = (username, password, type) => {
     const validPassword = isString(password)
     const validType = isString(type)
     console.log('username: ' + validUsername + ' password: ' + validPassword + ' type: ' + validType)
-    return removeRedundant({username: validUsername, password: validPassword, type: validType})
+    return removeRedundant({ username: validUsername, password: validPassword, type: validType })
 }
 
 exports.addUser = async (username, password, type) => {
     const hash = createHash(password)
     const validatedArgs = _validateArgs(username, hash, type)
     const user = new Users(validatedArgs)
-    return await user.save()
+    return (await user.save()).toJSON()
 }
 
 exports.deleteUser = async (id) => {
@@ -83,3 +84,11 @@ exports.deleteUser = async (id) => {
     return await user.delete()
 }
 
+exports.getAllUsers = async () => {
+    let data = new Promise(resolve => {
+        Users.find({}, function(err, res) {
+            resolve(res)
+        })
+    })
+    return data
+}

@@ -14,9 +14,10 @@ app.set('view engine', 'jade')
 app.use(cors())
 app.options('*', cors())
 
+const db_link = 'mongodb+srv://ufa:ufa@test-vjpn7.gcp.mongodb.net/ufa?retryWrites=true'
 const mongoose = require('mongoose')
 mongoose.set('debug', true)
-mongoose.connect('mongodb://webappdev:k61ca2@ds237196.mlab.com:37196/u-faculties', {useNewUrlParser: true})
+mongoose.connect(db_link, { useNewUrlParser: true })
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function () {
@@ -25,7 +26,7 @@ db.once('open', function () {
 
 app.use(logger('dev'))
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 

@@ -62,5 +62,16 @@ exports.verifyUser = (req, res, next) => {
         console.log(e.message || e)
         next()
     }
+}
 
+exports.parseUser = (req, res, next) => {
+    const {authorization} = {...req.headers}
+    req.body.currentUser = {}
+    if (!authorization) return next()
+    try {
+        req.body.currentUser = verifyHeaders(authorization)
+        next()
+    } catch (e) {
+        next()
+    }
 }
