@@ -1,25 +1,16 @@
 const mongoose = require('mongoose')
 
 const teacher = new mongoose.Schema({
-    user: {type: mongoose.Types.ObjectId, ref: 'users'},
+    // user: {type: mongoose.Types.ObjectId, ref: 'users'},
     name: String,
     email: String,
-    vnuEmail: String,
     phone: String,
     address: String,
-    department: mongoose.Types.ObjectId,
+    department: String,
     website: String,
-    degree: {
-        type: String,
-        enum: ['master', 'phd', 'doctor']
-    },
-    position: String,
+    degree: String,
     avatar: String,
-    fields: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'fields',
-        default: []
-    }]
+    description: String,
 })
 
 module.exports = mongoose.model('teachers', teacher)

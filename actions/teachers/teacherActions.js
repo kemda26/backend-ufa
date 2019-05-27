@@ -38,6 +38,28 @@ const _validateNewTeacherArgs = (args) => {
     return removeRedundant({username, address, department, name, email, vnuEmail, phone, website, degree, position})
 }
 
+exports.getOneTeacher = async (id) => {
+    let data = new Promise(resolve => {
+        Teachers.findOne({
+            _id: id.toString()
+        }, function(err, res) {
+            resolve(res)
+        })
+    })
+    return data
+}
+
+exports.editProfile = async (data) => {
+    const {id} = data
+    const teacher = await Teachers.findOne({
+        _id: id.toString()
+    })
+    if (!teacher) throw new Error('Teacher not found')
+    await teacher.delete()
+    const newTeacher = new Teachers({_id:id, ...data})
+    return await newTeacher.save()
+}
+
 exports.getTeachers = async (args) => {
     const validatedArgs = _validateArgs(args)
     const {limit, page, ...query} = validatedArgs
@@ -100,9 +122,10 @@ exports.addTeacher = async (args) => {
     return {user, teacher, mail}
 }
 
-exports.editTeacher = async (args) => {
-    const validatedArgs = _validateNewTeacherArgs(args)
-    const {id, ...teacherDetails} = validatedArgs
+exports.editTeacher = async (data) => {
+    // const validatedArgs = _validateNewTeacherArgs(args)
+    // const {id, ...teacherDetails} = validatedArgs
+    const {} = data
     const teacher = await Teachers.findOne({
         _id: id
     }).select('_id')

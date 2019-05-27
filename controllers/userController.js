@@ -39,8 +39,8 @@ exports.changePassword = (req, res) => {
 }
 
 exports.addUser = (req, res) => {
-    const {number, name, username, password, type, email, degree, department} = {...req.body}
-    userActions.addUser({number, name, username, password, type, email, degree, department})
+    const {name, username, password, type, email, phone} = {...req.body}
+    userActions.addUser({name, username, password, type, email, phone})
         .then(data => res.send(data))
         .catch(err => res.send({
             success: false,
@@ -66,9 +66,9 @@ exports.getAllUsers = (req, res) => {
 
 exports.editUser = (req, res) => {
     // console.log(req)
-    const {id ,number, name, username, password, type, email, degree, department} = {...req.body}
+    const {id , name, username, password, type, email, phone} = {...req.body}
     // console.log({id ,number, name, username, password, type, email, degree, department})
-    userActions.editUser({id ,number, name, username, password, type, email, degree, department})
+    userActions.editUser({id , name, username, password, type, email, phone})
         .then(data => res.send(data))
         .catch(e => res.send({success: false, message: e.message || e}))
 }
