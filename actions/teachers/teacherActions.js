@@ -1,24 +1,10 @@
-const {Teachers, Departments, Users} = require('../../models')
+const {Teachers, Users} = require('../../models')
 const {validateQueryArgs} = require('../../helpers/validators/getQueryValidators')
 const {sendMail} = require('../../helpers/mail')
 const {convertMdToHtml} = require('../../helpers/markdown')
 const {signJwt} = require('../../helpers/bcrypt')
 const {isString, removeRedundant, isObjectId} = require('../../helpers/validators/typeValidators')
 const {uploadImgur} = require('../../helpers/imgur')
-
-const _validateArgs = (args) => {
-    const {page, limit} = validateQueryArgs(args)
-    const name = isString(args.name)
-    const email = isString(args.email)
-    const vnuEmail = isString(args.vnuEmail)
-    const phone = isString(args.phone)
-    const address = isString(args.address)
-    const website = isString(args.website)
-    const degree = isString(args.degree)
-    const position = isString(args.position)
-
-    return removeRedundant({page, address, limit, name, email, vnuEmail, phone, website, degree, position})
-}
 
 const _validateNewTeacherArgs = (args) => {
     const username = isString(args.username)
@@ -60,34 +46,13 @@ exports.editProfile = async (data) => {
     return await newTeacher.save()
 }
 
-exports.getTeachers = async (args) => {
-    const validatedArgs = _validateArgs(args)
-    const {limit, page, ...query} = validatedArgs
-
-    const getQuery = Object.keys(query).reduce((q, key) => ({
-        ...q,
-        [key]: {$regex: new RegExp(`${query[key].toLowerCase()}`, 'i')}
-    }), {})
-    const skip = (page - 1) * limit
-
-    const teacherQuery = Teachers
-        .find(getQuery)
-        .skip(skip)
-        .limit(limit)
-        .populate({
-            path: 'department',
-            model: Departments,
-            select: '_id name'
+exports.getTeachers = async () => {
+    let data = new Promise(resolve => {
+        Teachers.find({}, function(err, res) {
+            resolve(res)
         })
-        .lean()
-    const totalQuery = Teachers.countDocuments({})
-    const [teachers, total] = await Promise.all([teacherQuery, totalQuery])
-
-    return {
-        total,
-        teachers,
-        page,
-    }
+    })
+    return data
 }
 
 exports.addTeacher = async (args) => {

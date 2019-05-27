@@ -6,11 +6,11 @@ const teacher = new mongoose.Schema({
     email: String,
     phone: String,
     address: String,
-    department: String,
+    department: String, 
     website: String,
     degree: String,
     avatar: String,
     description: String,
 })
 
-module.exports = mongoose.model('teachers', teacher)
+module.exports = mongoose.model('teachers', teacher, 'teachers')
