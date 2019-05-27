@@ -11,6 +11,7 @@ const teacher = new mongoose.Schema({
     degree: String,
     avatar: String,
     description: String,
+    field: String,
 })
 
 module.exports = mongoose.model('teachers', teacher, 'teachers')

@@ -8,17 +8,17 @@ exports.getTeachers = (req, res) => {
 }
 
 exports.addTeacher = (req, res) => {
-    const { name, username, email, phone, address, website, degree, department, avatar, description } = { ...req.body }
+    const { name, username, email, phone, address, website, degree, department, avatar, description ,field } = { ...req.body }
 
-    teacherActions.addTeacher({ name, username, email, phone,  address, website, degree, department, avatar, description})
+    teacherActions.addTeacher({ name, username, email, phone,  address, website, degree, department, avatar, description, field})
         .then(data => res.send({ success: true, data }))
         .catch(err => res.send({ success: false, message: err.message || err }))
 }
 
 exports.editProfile = (req, res) => {
-    const {id, name, email, phone, address, website, degree, avatar, department, description  } = { ...req.body, ...req.params }
+    const {id, name, email, phone, address, website, degree, avatar, department, description, field } = { ...req.body, ...req.params }
 
-    teacherActions.editProfile({ id, name, email, phone, address, website, degree, avatar, department, description })
+    teacherActions.editProfile({ id, name, email, phone, address, website, degree, avatar, department, description, field })
         .then(data => res.send(data))
         .catch(err => res.send({ success: false, message: err.message || err }))
 }
