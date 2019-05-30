@@ -8,16 +8,16 @@ exports.login = async (username, password) => {
         username,
     }).select('_id username password type profile')
 
-    if (!user) throw new Error('User not found')
+    if (!user) throw new Error('Tài khoản không tồn tại')
     // console.log(user.password)
-    if (password != user.password) throw new Error('Wrong password')
-    console.log({
-        id: user._id.toString(),
-        username,
-        type: user.type,
-        token: signJwt({ username, type: user.type}),
-        profile: user.profile.toString(),
-    })
+    if (password != user.password) throw new Error('Sai mật khẩu')
+    // console.log({
+    //     id: user._id.toString(),
+    //     username,
+    //     type: user.type,
+    //     token: signJwt({ username, type: user.type}),
+    //     profile: user.profile.toString(),
+    // })
     return {
         id: user._id.toString(),
         username,
@@ -31,43 +31,23 @@ exports.verify = async (currentUser) => {
     return currentUser
 }
 
-exports.changePassword = async ({ username, password, oldPassword, currentUser }) => {
-    let user = await Users.findOne({ username })
-    let newPassword = createHash(password);
-    if (!user) throw new Error('User not found')
-    if (user.password && user.status === 'active') {
-        if (compareHash(oldPassword, user.password)) {
-            user.password = newPassword
-            await user.save()
-        } else {
-            throw new Error('Wrong password')
-        }
-    } else {
-        if (currentUser.username !== username) throw new Error('Wrong token')
-        user.password = newPassword
-        user.status = 'active'
-        await user.save()
-    }
+// 5ce8fe311c9d440000f74698
+// 5cead7a41c9d440000dc467e
 
-    const value = createHash(String(new Date().getTime()))
-    const newToken = new Tokens({ user: user._id, value })
-    await Tokens.deleteMany({ user: user._id })
-    await newToken.save()
-
-    return {
-        username,
-        type: user.type,
-        token: signJwt({ username, type: user.type, value })
-    }
+exports.changePassword = async (newData) => {
+    const {id, currentPassword, newPassword} = newData
+    const user = await Users.findOne({
+        _id: id,
+    })
+    const {_id, username, profile, type} = user
+    if (user.password != currentPassword) throw new Error('Mật khẩu hiện tại không chính xác')
+    console.log(user)
+    const newUser = new Users({_id, username, profile, type, password: newPassword})
+    console.log(newUser)
+    await user.delete()
+    return await newUser.save()
 }
 
-const _validateArgs = (username, password, type) => {
-    const validUsername = isString(username)
-    const validPassword = isString(password)
-    const validType = isString(type)
-    console.log('username: ' + validUsername + ' password: ' + validPassword + ' type: ' + validType)
-    return removeRedundant({ username: validUsername, password: validPassword, type: validType })
-}
 
 exports.addUser = async (newUser) => {
     const id = moongse.Types.ObjectId()

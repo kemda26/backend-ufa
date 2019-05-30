@@ -25,13 +25,10 @@ exports.verify = (req, res) => {
 }
 
 exports.changePassword = (req, res) => {
-    const {username, password, oldPassword, currentUser} = {...req.body}
+    const {id, currentPassword, newPassword} = {...req.body}
 
-    userActions.changePassword({username, password, oldPassword, currentUser})
-        .then(data => res.send({
-            success: true,
-            data,
-        }))
+    userActions.changePassword({id, currentPassword, newPassword})
+        .then(data => res.send(data))
         .catch(err => res.send({
             success: false,
             message: err.message || err

@@ -34,19 +34,16 @@ router.patch('/fields/:id', fields.editFields)
 router.delete('/fields/:id', fields.deleteField)
 
 const user = require('./controllers/userController')
-router.post('/user/verify', auth.verifyUser, user.verify)
-router.post('/user/password', auth.parseUser, user.changePassword)
+// router.post('/user/verify', auth.verifyUser, user.verify)
+// router.post('/user/password', auth.parseUser, user.changePassword)
+router.post('/user/changepassword', user.changePassword)
 
 router.get('/users', user.getAllUsers)
 router.post('/user/login', user.login)
+
 router.post('/manage/user/add', auth.isAdmin, user.addUser)
 router.delete('/manage/user/delete/:id', auth.isAdmin, user.deleteUser)
 router.post('/manage/user/edit/:id', auth.isAdmin, user.editUser)
 
-const topics = require('./controllers/topicController')
-router.get('/topics', topics.getTopics)
-router.post('/topics', topics.addTopics)
-router.patch('/topics/:id', topics.editTopics)
-router.delete('/topics/:id', topics.deleteTopic)
 
 module.exports = router
