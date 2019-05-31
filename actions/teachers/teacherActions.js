@@ -26,12 +26,14 @@ exports.editProfile = async (data) => {
 exports.addField = async (data) => {
     const {id, field} = data
     const teacher = await Teachers.findOne({
-        _id: id
+        _id: id.toString()
     })
     if (!teacher) throw new Error('Teacher not found')
     const {name, email, phone, address, website, degree, avatar, department, description} = teacher
+    console.log(teacher)
     await teacher.delete()
-    const newTeacher = new Teacher({_id: id, name, email, phone, address, website, degree, avatar, department, description, field})
+    const newTeacher = new Teachers({_id: id, name, email, phone, address, website, degree, avatar, department, description, field})
+    console.log(newTeacher)
     return await newTeacher.save()
 }
 

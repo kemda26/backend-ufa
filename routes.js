@@ -14,7 +14,7 @@ const teacher = require('./controllers/teacherController')
 router.get('/teachers', teacher.getTeachers)
 router.get('/teacher/:id', teacher.getOneTeacher)
 router.post('/teacher/:id', teacher.editProfile)
-router.patch('/teacher/:id', teacher.addField)
+router.post('/teacher/field/:id', teacher.addField)
 router.delete('/teacher/:id', teacher.deleteTeacher)
 
 const department = require('./controllers/departmentController')
@@ -25,7 +25,7 @@ router.delete('/departments/:id', department.deleteDepartment)
 
 const fields = require('./controllers/fieldController')
 router.get('/fields', fields.getFields)
-router.post('/fields', fields.addFields)
+router.post('/fields/', fields.addFields)
 router.patch('/fields/:id', fields.editFields)
 router.delete('/fields/:id', fields.deleteField)
 

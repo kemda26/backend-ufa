@@ -1,13 +1,10 @@
 const mongoose = require('mongoose')
 
 const fields = new mongoose.Schema({
-    name: String,
-    children: [mongoose.Schema.Types.ObjectId],
-    teachers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'teachers',
-        default: []
-    }]
+    title: String,
+    value: String,
+    key: String,
+    children: Array,
 })
 
-module.exports = mongoose.model('fields', fields)
+module.exports = mongoose.model('fields', fields, 'fields')

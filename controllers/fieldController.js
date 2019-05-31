@@ -1,12 +1,8 @@
 const getFieldsActions = require('../actions/fields/fieldsActions')
 
 exports.getFields = (req, res) => {
-    const {limit, page, name} = {...req.query, ...req.body}
-    getFieldsActions.getFields({limit, page, name})
-        .then(data => res.send({
-            success: true,
-            data
-        }))
+    getFieldsActions.getFields()
+        .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
