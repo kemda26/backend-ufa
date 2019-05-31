@@ -1,28 +1,5 @@
 const {Teachers, Users} = require('../../models')
-const {validateQueryArgs} = require('../../helpers/validators/getQueryValidators')
-const {sendMail} = require('../../helpers/mail')
-const {convertMdToHtml} = require('../../helpers/markdown')
-const {signJwt} = require('../../helpers/bcrypt')
-const {isString, removeRedundant, isObjectId} = require('../../helpers/validators/typeValidators')
-const {uploadImgur} = require('../../helpers/imgur')
 
-const _validateNewTeacherArgs = (args) => {
-    const username = isString(args.username)
-    const name = isString(args.name)
-    const email = isString(args.email)
-    const vnuEmail = isString(args.vnuEmail)
-    const phone = isString(args.phone)
-    const address = isString(args.address)
-    const website = isString(args.website)
-    const degree = isString(args.degree)
-    const position = isString(args.position)
-    const department = isObjectId(args.department)
-    const field = isObjectId(args.field)
-
-    console.log(username, name, email)
-    if (!username || !name || !email) throw new Error('Missing params')
-    return removeRedundant({username, address, department, name, email, vnuEmail, phone, website, degree, position})
-}
 
 exports.getOneTeacher = async (id) => {
     let data = new Promise(resolve => {
@@ -46,6 +23,18 @@ exports.editProfile = async (data) => {
     return await newTeacher.save()
 }
 
+exports.addField = async (data) => {
+    const {id, field} = data
+    const teacher = await Teachers.findOne({
+        _id: id
+    })
+    if (!teacher) throw new Error('Teacher not found')
+    const {name, email, phone, address, website, degree, avatar, department, description} = teacher
+    await teacher.delete()
+    const newTeacher = new Teacher({_id: id, name, email, phone, address, website, degree, avatar, department, description, field})
+    return await newTeacher.save()
+}
+
 exports.getTeachers = async () => {
     let data = new Promise(resolve => {
         Teachers.find({}, function(err, res) {
@@ -55,41 +44,7 @@ exports.getTeachers = async () => {
     return data
 }
 
-exports.addTeacher = async (args) => {
-    const validatedTeacher = _validateNewTeacherArgs(args)
-
-    const existUser = await Users.findOne({
-        $or: [
-            {username: validatedTeacher.username},
-            {email: validatedTeacher.email}
-        ]
-    })
-
-    if (existUser) throw new Error('Username existed')
-
-    const newUser = new Users({
-        username: validatedTeacher.username,
-        status: 'inactive',
-        type: 'teacher',
-        email: validatedTeacher.email
-    })
-    const user = await newUser.save()
-
-    const newTeacher = new Teachers({...validatedTeacher, user: user._id})
-    const token = signJwt({
-        username: validatedTeacher.username
-    })
-    const teacher = await newTeacher.save()
-    const title = 'u-Faculties registration'
-    const body = `Your change password token: ${token}`
-    const mail = await sendMail({receiver: validatedTeacher.email, title, body: convertMdToHtml(body)})
-
-    return {user, teacher, mail}
-}
-
 exports.editTeacher = async (data) => {
-    // const validatedArgs = _validateNewTeacherArgs(args)
-    // const {id, ...teacherDetails} = validatedArgs
     const {} = data
     const teacher = await Teachers.findOne({
         _id: id
@@ -106,7 +61,6 @@ exports.editTeacher = async (data) => {
 }
 
 exports.deleteTeacher = async (id) => {
-    const ID = isString(id)
     const teacher = await Teachers.findOne({
         _id: id
     }).select('_id')
@@ -114,13 +68,3 @@ exports.deleteTeacher = async (id) => {
     return await teacher.delete()
 }
 
-exports.uploadAvatar = async (file, _id) => {
-    const teacher = await Teachers.findOne({
-        _id,
-    })
-    if (!teacher) throw new Error('Teacher not found')
-
-    const avatar = await uploadImgur(file.path)
-    teacher.avatar = avatar
-    return await teacher.save()
-}
