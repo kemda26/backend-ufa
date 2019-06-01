@@ -14,8 +14,8 @@ exports.addFields = (req, res) => {
 }
 
 exports.editFields = (req, res) => {
-    const {name, parentId, rowId} = {...req.body, ...req.params}
-    fieldActions.editField({name, parentId, rowId})
+    const {id, name, parentId, rowId} = {...req.body, ...req.params}
+    fieldActions.editField({id, name, parentId, rowId})
         .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
@@ -24,7 +24,7 @@ exports.deleteField = (req, res) => {
     const {id, name} = {...req.body, ...req.params}
     console.log({...req.body})
     console.log({...req.params})
-    fieldActions.deleteField({name})
+    fieldActions.deleteField({id, name})
         .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }

@@ -23,9 +23,9 @@ exports.addFields = async (data) => {
 }
 
 exports.editField = async (data) => {
-    const {name, parentId, rowId} = data
+    const {id, name, parentId, rowId} = data
     const field = await Fields.findOne({
-        name
+        _id: id
     })
     if(!field) throw new Error('Field not found')
     const newField = new Fields({name, parentId, rowId})
@@ -39,7 +39,7 @@ exports.deleteField = async (data) => {
     const {id, name} = data
     // console.log(name)
     const field = await Fields.findOne({
-        _id: id
+        _id: id.toString()
     })
     if(!field) throw new Error('Field not found')
     return await field.delete()
