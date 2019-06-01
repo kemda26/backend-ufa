@@ -66,7 +66,7 @@ exports.deleteUser = async (id) => {
         _id: user.profile.toString()
     })
     if (!user) throw new Error('User not found')
-    teacher.delete()
+    await teacher.delete()
     return await user.delete()
 }
 
