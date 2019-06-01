@@ -1,59 +1,46 @@
 const {Fields} = require('../../models')
-const {validateQueryArgs} = require('../../helpers/validators/getQueryValidators')
-const {isString, isObjectId, removeRedundant} = require('../../helpers/validators/typeValidators')
 
-// const _validateArgs = ({limit, page, name}) => {
-//     const paging = validateQueryArgs({limit, page})
-//     const parsedName = isString(name)
-
-//     return {
-//         ...paging,
-//         name: parsedName || '',
-//     }
-// }
-
-const _validateFieldArgs = (args) => {
-    const name = isString(args.name)
-    const parent = isObjectId(args.parent)
-    const id = isString(args.id)
-    return removeRedundant({id, name, parent})
-}
 
 exports.getFields = async () => {
     const data = new Promise( resolve => {
-        Fields.find({}, '-_id', function(err, res) {
+        Fields.find({}, function(err, res) {
             resolve(res)
         })
     })
     return data
-    // const data = await Fields.find({}).select('title value key children')
-    // return await data
 }
-    
 
-exports.addField = async (args) => {
-    const validatedArgs = _validateFieldArgs(args)
-    const field = new Fields(validatedArgs)
+exports.addOneField = async (data) => {
+    const {name, rowId} = data
+    const field = new Fields({name, rowId})
+    return await field.save()
+}   
+
+exports.addFields = async (data) => {
+    const {name, parentId, rowId} = data
+    const field = new Fields({name, parentId, rowId})
     return await field.save()
 }
 
-exports.editField = async (args) => {
-    const validatedArgs = _validateFieldArgs(args)
-    const {id, ...fieldDetails} = validatedArgs
+exports.editField = async (data) => {
+    const {name, parentId, rowId} = data
+    const field = await Fields.findOne({
+        name
+    })
+    if(!field) throw new Error('Field not found')
+    const newField = new Fields({name, parentId, rowId})
+    await field.delete()
+    
+    return await newField.save()
+}
+
+exports.deleteField = async (data) => {
+    console.log(data)
+    const {id, name} = data
+    // console.log(name)
     const field = await Fields.findOne({
         _id: id
-    }).select('_id')
-    if(!field) throw new Error('Field not found')
-
-    for (let key in fieldDetails) field[key] = fieldDetails[key]
-    return await field.save()
-}
-
-exports.deleteField = async (id) => {
-    const ID = isString(id)
-    const field = await Fields.findOne({
-        _id: ID
-    }).select('_id')
+    })
     if(!field) throw new Error('Field not found')
     return await field.delete()
 }

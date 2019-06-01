@@ -1,37 +1,37 @@
-const getFieldsActions = require('../actions/fields/fieldsActions')
+const fieldActions = require('../actions/fields/fieldsActions')
 
 exports.getFields = (req, res) => {
-    getFieldsActions.getFields()
+    fieldActions.getFields()
         .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
 exports.addFields = (req, res) => {
-    const {name, parent} = {...req.body}
-    getFieldsActions.addField({name, parent})
-        .then(field => res.send({
-            success: true,
-            field
-        }))
+    const {name, parentId, rowId} = {...req.body, ...req.params}
+    fieldActions.addFields({name, parentId, rowId})
+        .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
 exports.editFields = (req, res) => {
-    const {id, name, parent} = {...req.body, ...req.params}
-    getFieldsActions.editField({id, name, parent})
-        .then(field => res.send({
-            success: true,
-            field
-        }))
+    const {name, parentId, rowId} = {...req.body, ...req.params}
+    fieldActions.editField({name, parentId, rowId})
+        .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }
 
 exports.deleteField = (req, res) => {
-    const {id} = {...req.params}
-    getFieldsActions.deleteField(id)
-        .then(field => res.send({
-            success: true,
-            field
-        }))
+    const {id, name} = {...req.body, ...req.params}
+    console.log({...req.body})
+    console.log({...req.params})
+    fieldActions.deleteField({name})
+        .then(data => res.send(data))
+        .catch(err => res.send({success: false, message: err.message || err}))
+}
+
+exports.addOneField = (req, res) => {
+    const {name, rowId} = {...req.body, ...req.params}
+    fieldActions.addOneField({name, rowId})
+        .then(data => res.send(data))
         .catch(err => res.send({success: false, message: err.message || err}))
 }

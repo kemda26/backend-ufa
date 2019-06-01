@@ -1,14 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const auth = require('./middlewares/auth')
-const multer = require('multer')
-
-const rootController = require('./controllers/rootController')
-
-// router.get('/', rootController.home)
-// router.post('/platform027', rootController.addAuthor)
-// router.get('/ping', rootController.home)
-// router.get('/errorExample', rootController.fakeError)
 
 const teacher = require('./controllers/teacherController')
 router.get('/teachers', teacher.getTeachers)
@@ -25,9 +17,10 @@ router.delete('/departments/:id', department.deleteDepartment)
 
 const fields = require('./controllers/fieldController')
 router.get('/fields', fields.getFields)
-router.post('/fields/', fields.addFields)
-router.patch('/fields/:id', fields.editFields)
-router.delete('/fields/:id', fields.deleteField)
+router.post('/add/fields', fields.addFields)
+router.post('/add/onefields', fields.addOneField)
+router.post('/edit/fields', fields.editFields)
+router.delete('/delete/fields', fields.deleteField)
 
 const user = require('./controllers/userController')
 router.post('/user/changepassword', user.changePassword)
