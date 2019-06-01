@@ -16,6 +16,7 @@ exports.editProfile = (req, res) => {
 
 exports.addField = (req, res) => {
     const {id , field} = {...req.body, ...req.params}
+    console.log(field)
     teacherActions.addField({id, field})
         .then(data => res.send(data))
         .catch(err => res.send({ success: false, message: err.message || err }))

@@ -30,8 +30,10 @@ exports.addField = async (data) => {
     })
     if (!teacher) throw new Error('Teacher not found')
     const {name, email, phone, address, website, degree, avatar, department, description} = teacher
+    console.log(teacher)
     await teacher.delete()
-    const newTeacher = new Teachers({_id: id, name, email, phone, address, website, degree, avatar, department, description, field})
+    const newTeacher = new Teachers({_id: id, name, email, phone, address, website, degree, avatar, department, description, field: field})
+    console.log(newTeacher)
     return await newTeacher.save()
 }
 
